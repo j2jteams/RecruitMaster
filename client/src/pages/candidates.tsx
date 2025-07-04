@@ -23,13 +23,35 @@ export default function Candidates() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const [filters, setFilters] = useState({
-    position: "",
-    status: "",
+    position: "all",
+    status: "all",
     search: "",
   });
 
   const { data: candidates, isLoading: candidatesLoading, error } = useQuery({
     queryKey: ["/api/candidates", filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.position && filters.position !== "all") {
+        params.append("position", filters.position);
+      }
+      if (filters.status && filters.status !== "all") {
+        params.append("status", filters.status);
+      }
+      if (filters.search) {
+        params.append("search", filters.search);
+      }
+      
+      const response = await fetch(`/api/candidates?${params.toString()}`, {
+        credentials: "include"
+      });
+      
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${response.statusText}`);
+      }
+      
+      return response.json();
+    },
     retry: false,
   });
 
@@ -164,7 +186,7 @@ export default function Candidates() {
                       <SelectValue placeholder="All Positions" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Positions</SelectItem>
+                      <SelectItem value="all">All Positions</SelectItem>
                       <SelectItem value="Senior Frontend Developer">Senior Frontend Developer</SelectItem>
                       <SelectItem value="Backend Developer">Backend Developer</SelectItem>
                       <SelectItem value="Full Stack Developer">Full Stack Developer</SelectItem>
@@ -178,7 +200,7 @@ export default function Candidates() {
                       <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Status</SelectItem>
+                      <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="New">New</SelectItem>
                       <SelectItem value="In Review">In Review</SelectItem>
                       <SelectItem value="Shortlisted">Shortlisted</SelectItem>

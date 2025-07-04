@@ -28,9 +28,9 @@ export default function Sidebar() {
             const isActive = location === item.path;
             
             return (
-              <Link key={item.path} href={item.path}>
-                <a
-                  className={`nav-item flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              <Link key={item.path} href={item.path} asChild>
+                <div
+                  className={`nav-item flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                     isActive
                       ? "active bg-primary bg-opacity-10 text-primary"
                       : "text-gray-700 hover:bg-gray-50"
@@ -38,7 +38,7 @@ export default function Sidebar() {
                 >
                   <Icon className="w-5 h-5 mr-3" />
                   {item.label}
-                </a>
+                </div>
               </Link>
             );
           })}
