@@ -32,7 +32,7 @@ export default function Sidebar() {
                 <a
                   className={`nav-item flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                     isActive
-                      ? "active bg-primary/10 text-primary"
+                      ? "active bg-primary bg-opacity-10 text-primary"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
