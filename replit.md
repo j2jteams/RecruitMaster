@@ -17,23 +17,22 @@ RecruiterHub is a comprehensive full-stack recruiting platform built with React,
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js server
-- **Database**: PostgreSQL with Neon serverless database
-- **ORM**: Drizzle ORM for type-safe database operations
+- **Database**: In-memory storage for simple deployment
 - **Authentication**: Passport.js with OpenID Connect (Replit Auth)
-- **Session Management**: Express sessions with PostgreSQL store
+- **Session Management**: Express sessions with memory store
 - **API Design**: RESTful API with JSON responses
 
 ## Key Components
 
-### Database Layer
-- **Schema**: Defined in `shared/schema.ts` with Drizzle ORM
-- **Tables**: Users, Sessions, Positions, Candidates
+### Storage Layer
+- **Implementation**: In-memory storage using JavaScript Maps
+- **Data**: Users, Positions, Candidates stored in memory
 - **Relationships**: Candidates linked to positions via foreign keys
-- **Migrations**: Handled via Drizzle Kit configuration
+- **Persistence**: Data resets on server restart (ideal for development/demos)
 
 ### Authentication System
 - **Provider**: Replit OpenID Connect authentication
-- **Session Storage**: PostgreSQL-backed session store
+- **Session Storage**: Memory-based session store
 - **Middleware**: Authentication guards on protected routes
 - **User Management**: Automatic user creation/update on login
 
@@ -86,10 +85,11 @@ RecruiterHub is a comprehensive full-stack recruiting platform built with React,
 - **Environment**: Production configuration via NODE_ENV variable
 
 ### Configuration Requirements
-- `DATABASE_URL`: PostgreSQL connection string
 - `SESSION_SECRET`: Secure session encryption key
 - `REPLIT_DOMAINS`: Allowed domains for OIDC
 - `ISSUER_URL`: OpenID Connect issuer endpoint
+
+Note: Database configuration is no longer required as the app now uses in-memory storage.
 
 ## User Preferences
 
@@ -98,4 +98,5 @@ Preferred communication style: Simple, everyday language.
 ## Changelog
 
 Changelog:
+- July 05, 2025. Switched from PostgreSQL to in-memory storage for simple deployment on Render free tier
 - July 04, 2025. Initial setup
