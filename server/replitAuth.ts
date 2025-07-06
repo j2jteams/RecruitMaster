@@ -8,7 +8,10 @@ import memoize from "memoizee";
 import MemoryStore from "memorystore";
 import { storage } from "./storage";
 
-if (!process.env.REPLIT_DOMAINS) {
+// Check if we're in a Render environment (no REPL_ID means not on Replit)
+const isRenderDeployment = !process.env.REPL_ID;
+
+if (!isRenderDeployment && !process.env.REPLIT_DOMAINS) {
   throw new Error(
     "Environment variable REPLIT_DOMAINS not provided. " +
     "Set REPLIT_DOMAINS to your domain (e.g., 'your-app.onrender.com' for Render deployment)"
@@ -72,6 +75,16 @@ export async function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  if (isRenderDeployment) {
+    // Simple demo authentication for Render deployment
+    setupDemoAuth(app);
+  } else {
+    // Full Replit OIDC authentication
+    await setupReplitAuth(app);
+  }
+}
+
+async function setupReplitAuth(app: Express) {
   const config = await getOidcConfig();
 
   const verify: VerifyFunction = async (
@@ -127,10 +140,60 @@ export async function setupAuth(app: Express) {
   });
 }
 
+function setupDemoAuth(app: Express) {
+  // Demo user for Render deployment
+  const demoUser = {
+    claims: {
+      sub: "demo-user-123",
+      email: "demo@example.com",
+      first_name: "Demo",
+      last_name: "User",
+      profile_image_url: "https://via.placeholder.com/150"
+    }
+  };
+
+  passport.serializeUser((user: Express.User, cb) => cb(null, user));
+  passport.deserializeUser((user: Express.User, cb) => cb(null, user));
+
+  app.get("/api/login", async (req, res) => {
+    // Auto-create demo user in storage
+    await storage.upsertUser({
+      id: demoUser.claims.sub,
+      email: demoUser.claims.email,
+      firstName: demoUser.claims.first_name,
+      lastName: demoUser.claims.last_name,
+      profileImageUrl: demoUser.claims.profile_image_url
+    });
+
+    req.login(demoUser, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Login failed" });
+      }
+      res.redirect("/");
+    });
+  });
+
+  app.get("/api/logout", (req, res) => {
+    req.logout(() => {
+      res.redirect("/");
+    });
+  });
+}
+
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const user = req.user as any;
 
-  if (!req.isAuthenticated() || !user.expires_at) {
+  // For demo auth (Render deployment), just check if user exists
+  if (isRenderDeployment) {
+    return next();
+  }
+
+  // For Replit OIDC, check token expiration
+  if (!user.expires_at) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
