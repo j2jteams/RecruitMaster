@@ -32,7 +32,7 @@ export default function Sidebar() {
                 <div
                   className={`nav-item flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                     isActive
-                      ? "active bg-blue-50 text-blue-700 border-r-2 border-blue-500 font-semibold"
+                      ? "active bg-blue-100 text-blue-800 border-r-4 border-blue-600 font-semibold"
                       : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                   }`}
                 >
