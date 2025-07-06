@@ -85,9 +85,9 @@ RecruiterHub is a comprehensive full-stack recruiting platform built with React,
 - **Environment**: Production configuration via NODE_ENV variable
 
 ### Configuration Requirements
-- `SESSION_SECRET`: Secure session encryption key
-- `REPLIT_DOMAINS`: Allowed domains for OIDC
-- `ISSUER_URL`: OpenID Connect issuer endpoint
+- `SESSION_SECRET`: Secure session encryption key (any long random string)
+- `REPLIT_DOMAINS`: Your deployment domain (e.g., `your-app.onrender.com` for Render)
+- `ISSUER_URL`: OpenID Connect issuer endpoint (optional, defaults to Replit's OIDC)
 
 Note: Database configuration is no longer required as the app now uses in-memory storage.
 

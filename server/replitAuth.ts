@@ -9,7 +9,10 @@ import MemoryStore from "memorystore";
 import { storage } from "./storage";
 
 if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
+  throw new Error(
+    "Environment variable REPLIT_DOMAINS not provided. " +
+    "Set REPLIT_DOMAINS to your domain (e.g., 'your-app.onrender.com' for Render deployment)"
+  );
 }
 
 const getOidcConfig = memoize(
